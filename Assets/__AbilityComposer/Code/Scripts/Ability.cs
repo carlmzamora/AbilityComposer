@@ -15,12 +15,42 @@ public abstract class Ability : ScriptableObject
     public AbilitiesController abilitiesController;
     public HealthEntity owner;
     public int level = 1;
+    public int maxLevel = 1;
 
     public TargettingMode targettingMode = TargettingMode.NO_TARGET;
     protected List<HealthEntity> targets = new();
     protected bool targettingStarted = false;
     protected EntityGroup[] validTargets;
     protected Vector3 targetPoint;
+
+    #region DATA FUNCTIONALITY
+
+    public virtual Ability CreateAbilityInstance(AbilitiesController abilitiesController)
+    {
+        Ability instance = Instantiate(this);
+        return instance;
+    }
+
+    public ModifierFactory CreateModifierFactoryInstance(ModifierFactory factory)
+    {
+        return Instantiate(factory);
+    }
+
+    public List<ModifierFactory> CreateModifierFactoryInstances(List<ModifierFactory> multipleFactories)
+    {
+        List<ModifierFactory> instantiatedFactories = new();
+
+        foreach (ModifierFactory factory in multipleFactories)
+        {
+            instantiatedFactories.Add(Instantiate(factory));
+        }
+
+        return instantiatedFactories;
+    }
+
+    #endregion
+
+    #region INSTANCE FUNCTIONALITY
 
     public void Activate()
     {
@@ -87,28 +117,7 @@ public abstract class Ability : ScriptableObject
         targets.Clear();
     }
 
-    public virtual Ability CreateAbilityInstance(AbilitiesController abilitiesController)
-    {
-        Ability instance = Instantiate(this);
-        return instance;
-    }
-
-    public ModifierFactory CreateModifierFactoryInstance(ModifierFactory factory)
-    {
-        return Instantiate(factory);
-    }
-
-    public List<ModifierFactory> CreateModifierFactoryInstances(List<ModifierFactory> multipleFactories)
-    {
-        List<ModifierFactory> instantiatedFactories = new();
-
-        foreach(ModifierFactory factory in multipleFactories)
-        {
-            instantiatedFactories.Add(Instantiate(factory));
-        }
-
-        return instantiatedFactories;
-    }
+    #endregion
 }
 
 public enum TargettingMode
@@ -119,6 +128,13 @@ public enum TargettingMode
     UNIT_TARGET,
     RADIUS_TARGET
     //TO DO: VECTOR_TARGET
+}
+
+public enum AbilityLevelingMode
+{
+    ONLY_LEVEL_ONE,
+    WITH_MAX_LEVEL,
+    INFINITE_PROGRESSION
 }
 
 public enum EntityGroup
